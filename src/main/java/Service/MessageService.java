@@ -29,6 +29,12 @@ public class MessageService {
         return messageDAO.createNewMessageDAO(message);
     }
     public Message updateMessageByIdService(Message message, int id){
+        if (message.message_text == null || message.message_text.trim().isEmpty()) {
+            throw new IllegalArgumentException("Message text cannot be empty.");
+        }
+        if (message.message_text.length() > 255) { 
+            throw new IllegalArgumentException("Message text exceeds the allowed length.");
+        }
         boolean updatedMessage = messageDAO.updateMessageByIdDAO(message, id);
        if(updatedMessage){
         return messageDAO.getMessageByIdDAO(id);

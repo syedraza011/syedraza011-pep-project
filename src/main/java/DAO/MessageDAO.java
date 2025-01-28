@@ -59,23 +59,48 @@ public class MessageDAO {
         }
        return null;
     }
-    public boolean deleteMessageByIdDAO(int id){
+   
+    public Message deleteMessageByIdDAO(int id) {
         Connection connection = ConnectionUtil.getConnection();
-        try{
-            String sql = "delete from message where message_id=?";
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setInt(1,id);
-            int rowaffected = preparedStatement.executeUpdate();
-           
-            if(rowaffected>0){
-                return true;
+        Message message = null;
+    
+        try {
+            
+            String fetchSql = "SELECT * FROM message WHERE message_id = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(fetchSql);
+            preparedStatement.setInt(1, id);
+            ResultSet resultSet = preparedStatement.executeQuery();
+    
+            if (resultSet.next()) {
+                message = new Message(
+                    resultSet.getInt("message_id"),
+                    resultSet.getInt("posted_by"),
+                    resultSet.getString("message_text"),
+                    resultSet.getLong("time_posted_epoch")
+                );
             }
-          
-        }catch(SQLException e) {
-            System.out.println(e.getMessage());
+    
+            // If the message was found, proceed to delete it
+            if (message != null) {
+                String deleteSql = "DELETE FROM message WHERE message_id = ?";
+                PreparedStatement deleteStatement = connection.prepareStatement(deleteSql);
+                deleteStatement.setInt(1, id);
+                deleteStatement.executeUpdate();
+            }
+    
+        } catch (SQLException e) {
+            System.out.println("Error: " + e.getMessage());
+        } finally {
+            try {
+                if (connection != null) connection.close();
+            } catch (SQLException e) {
+                System.out.println("Error closing connection: " + e.getMessage());
+            }
         }
-        return false;
+    
+        return message; // Return the fetched message, or null if not found
     }
+    
     public Message createNewMessageDAO(Message message){
         Connection connection = ConnectionUtil.getConnection();
         try {
@@ -123,7 +148,8 @@ public class MessageDAO {
             int rowsUpdated = preparedStatement.executeUpdate();
             if (rowsUpdated > 0) {
                 return true;
-            } else {
+            } 
+            else {
                 return false;
             }
         } catch (SQLException e) {

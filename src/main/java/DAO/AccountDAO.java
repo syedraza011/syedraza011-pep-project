@@ -101,10 +101,12 @@ The body will contain a representation of a JSON Account, but will not contain a
         try{
            String sql= "Select * from Account where username=? and password=?;";
            PreparedStatement preparedStatement=connection.prepareStatement(sql);
+           preparedStatement.setString(1, username);
+           preparedStatement.setString(2, password);
            ResultSet resultSet=preparedStatement.executeQuery();
             if(resultSet.next()){
                 Account account= new Account(
-                    resultSet.getInt("Account_id"),
+                    resultSet.getInt("account_id"),
                     resultSet.getString("username"),
                     resultSet.getString("password"));
                 if(username.equals(account.getUsername()) && password.equals(account.getPassword())){

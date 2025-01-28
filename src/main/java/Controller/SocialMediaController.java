@@ -81,15 +81,15 @@ public class SocialMediaController {
             if (createdAccount != null) {
                 context.json(createdAccount);
             } else {
-                context.status(400).result("Failed to create account.");
+                context.status(400);
             }
             
         } catch(IllegalArgumentException e){
-            context.status(401).result("An error occurred while creating the account."+e.getMessage());
+            context.status(400);
         }
         catch(Exception e) {
             System.err.println("Error creating account: " + e.getMessage());
-            context.status(500).result("An error occurred while creating the account.");
+            context.status(500);
         }
     }
     /*
@@ -112,17 +112,17 @@ public class SocialMediaController {
             Account loggedInAccount = accountService.loginAccountService(account);
           
             if (account.getUsername() == null || account.getPassword() == null) {
-                context.status(400).json("Username and password are required.");
+                context.status(400);
                 return;
             }
             if (loggedInAccount != null) {
                 context.status(200).json(loggedInAccount);
             } 
             else {
-               context.status(401).json("Invalid username or password.");
+               context.status(401);
             }
         } catch (Exception e) {
-            context.status(500).json("Internal server error.");
+            context.status(500);
         }
     }
     
@@ -135,7 +135,7 @@ public class SocialMediaController {
         Message addedMessage = messageService.createMessageService(message);
         if(addedMessage!=null && message.message_text.length() <256 ){
             context.status(200);
-            context.json(mapper.writeValueAsString(addedMessage));
+            
         }else{
             context.status(400);
         }
@@ -144,10 +144,10 @@ public class SocialMediaController {
         try {
             MessageService messageService = new MessageService();
             List<Message> messages = messageService.getAllMessagesService();
-            context.status(200);
+           // context.status(200);
             context.json(messages);
         } catch (Exception e) {
-                context.status(500).result("An error occurred while fetching messages.");
+                context.status(500);
         }
     
     }
@@ -157,25 +157,27 @@ public class SocialMediaController {
             int id = Integer.parseInt(context.pathParam("message_id"));
             Message message = messageService.deleteMessageByIdService(id); // return a deleted message
 
-            if(message){
-                context.status(200).result("Message deleted successfully.");
+            if(message!=null){
+                context.status(200);
             }
-
-            //return result;
         }catch (Exception e) {
-            context.status(500).result("An error occurred while fetching message.");
+            context.status(500);
         }
-      
     }
     public void patchUpdateMessageByIdHandler(Context context){
         try{
             MessageService messageService= new MessageService();
             Message message = context.bodyAsClass(Message.class);
             int id = Integer.parseInt(context.pathParam("id"));
-            messageService.updateMessageByIdService(message,id);
-            context.status(200);
+           Message message2 = messageService.updateMessageByIdService(message,id);
+           if(message2 !=null){
+            context.status(200).json(message2);
+           }else {
+            context.status(400);
+           }
+            
         }catch(Exception e){
-            context.status(500).result("An error occurred while fetching message.");
+            context.status(400);
         }
     }
 }
