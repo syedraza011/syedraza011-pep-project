@@ -43,6 +43,7 @@ public class SocialMediaController {
         app.delete("messages/{message_id}",this::deleteMessageByIdHandler);
         app.get("messages/{message_id}", this::getMessageByIdHandler);
         app.patch("messages/{id}", this:: patchUpdateMessageByIdHandler);
+        app.get("/accounts/{account_id}/messages",this::getAllMessagesbyAUserHandler);
 
         return app;
     }
@@ -161,10 +162,24 @@ public class SocialMediaController {
             int id = Integer.parseInt(context.pathParam("message_id"));
             Message message = messageService.getMessageByIdService(id);
             if(message!=null){
-                context.status(200);
+                context.status(200).json(message);
             }
 
         }catch(Exception e){
+            context.status(500);
+        }
+    }
+    private void getAllMessagesbyAUserHandler(Context context){
+        try{
+            MessageService messageService= new MessageService();
+            int id = Integer.parseInt(context.pathParam("account_id"));
+           List<Message> messagesbyaUser = messageService.getAllMessagesbyAUserService(id);
+            if(messagesbyaUser!=null){
+                context.status(200).json(messagesbyaUser);
+            }
+
+        }catch(Exception e){
+            System.out.println(e.getMessage());
             context.status(500);
         }
     }
@@ -186,7 +201,7 @@ public class SocialMediaController {
             Message message = messageService.deleteMessageByIdService(id); 
 
             if(message!=null){
-                context.status(200);
+                context.status(200).json(message);
             }
         }catch (Exception e) {
             context.status(500);
