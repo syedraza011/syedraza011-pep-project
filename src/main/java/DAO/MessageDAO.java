@@ -57,7 +57,6 @@ public class MessageDAO {
         }
         return messages;
     }
-    
     public Message getMessageByIdDAO(int id){
         Connection connection = ConnectionUtil.getConnection();
         try{
@@ -100,8 +99,6 @@ public class MessageDAO {
                     resultSet.getLong("time_posted_epoch")
                 );
             }
-    
-            // If the message was found, delete it
             if (message != null) {
                 String deleteSql = "DELETE FROM message WHERE message_id = ?";
                 PreparedStatement deleteStatement = connection.prepareStatement(deleteSql);
