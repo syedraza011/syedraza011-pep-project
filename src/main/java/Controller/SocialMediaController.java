@@ -135,10 +135,16 @@ public class SocialMediaController {
         ObjectMapper mapper = new ObjectMapper();
        Message message = mapper.readValue(context.body(), Message.class);
         Message addedMessage = messageService.createMessageService(message);
-        if(addedMessage!=null){
-            context.status(200);
+        if(addedMessage!=null ){
+            if(addedMessage.message_text.isEmpty() || addedMessage.message_text.length() > 255)
+                context.status(400);
             
-        }else{
+           else
+                context.status(200).json(message);
+           
+            
+        }
+        else{
             context.status(400);
         }
     }

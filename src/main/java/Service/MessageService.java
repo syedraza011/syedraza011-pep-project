@@ -26,7 +26,15 @@ public class MessageService {
         return msg;
     }
     public Message createMessageService(Message message){
-        return messageDAO.createNewMessageDAO(message);
+       // if (message.message_text.trim().isEmpty()) {
+         //   throw new IllegalArgumentException("Message text cannot be empty.");
+        //}
+        //if (message.message_text.length() > 255) { 
+          //  throw new IllegalArgumentException("Message text exceeds the allowed length.");
+        //}else{
+         return messageDAO.createNewMessageDAO(message);
+        //}
+        
     }
     public Message updateMessageByIdService(Message message, int id){
         if (message.message_text == null || message.message_text.trim().isEmpty()) {

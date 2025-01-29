@@ -80,7 +80,7 @@ public class MessageDAO {
                 );
             }
     
-            // If the message was found, proceed to delete it
+            // If the message was found, delete it
             if (message != null) {
                 String deleteSql = "DELETE FROM message WHERE message_id = ?";
                 PreparedStatement deleteStatement = connection.prepareStatement(deleteSql);
@@ -98,7 +98,7 @@ public class MessageDAO {
             }
         }
     
-        return message; // Return the fetched message, or null if not found
+        return message; 
     }
     
     public Message createNewMessageDAO(Message message){
@@ -115,14 +115,9 @@ public class MessageDAO {
             preparedStatement.executeUpdate();
             ResultSet resultSet = preparedStatement.getGeneratedKeys();
             while(resultSet.next()){
-                Message newMessage = new Message(
-                    resultSet.getInt("message_id"),
-                    resultSet.getInt("posted_by"),
-                    resultSet.getString("message_text"),
-                    resultSet.getLong("time_posted_epoch"));
-
-                return newMessage;
+                    message.message_id=resultSet.getInt("message_id");
             }
+            return message;
 
         }catch(SQLException e){
             System.out.println(e.getMessage());
